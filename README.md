@@ -8,4 +8,4 @@ Script for post-installation blind network configuration
 5. Run PowerShell and run C:\ifcfg.ps1 -task
 6. Shutdown qemu and reboot into OS
 
-For debug, you can find ifcfg_<date>.log in root of C:\ partition
+For debug, you can find ifcfg_{date}.log in root of C:\ partition
