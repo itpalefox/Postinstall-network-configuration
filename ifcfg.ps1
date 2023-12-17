@@ -32,6 +32,14 @@ if (Test-Connection -ComputerName 8.8.8.8 -Count 3 -Delay 2 -Quiet) {
 	}
 } else {
 	WriteLog "Ping to GW and DNS is failed :("
+	if ((Get-NetAdapter | ? {$_.Status -eq "Not Present"}).MacAddress -eq "") {
+		WriteLog "Found broken driver!!! Trying to fix driver"
+        $neterror= ((((Get-NetAdapter).InterfaceDescription) -split "\s")[0,1,2,3]) -Join ' '
+        $driver=(Get-WmiObject Win32_PnpSignedDriver | select DeviceName,InfName |where {$_.devicename -like ((echo "*" $neterror "*") -join '') }).InfName[0]
+        pnputil.exe /delete-driver $driver /uninstall
+		WriteLog "Broken driver deleted! Wait new driver apply"
+		Start-Sleep -s 10
+	}
 # Retrieve the network adapter that you want to configure
 $adapter = Get-NetAdapter | ? {$_.Status -eq "up"} | ? {$_.MacAddress -eq $MacTg}
 if ($adapter) {
